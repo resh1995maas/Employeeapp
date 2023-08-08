@@ -22,13 +22,22 @@ app.use('/api',employeeRouter);
 const userRouter = require('./Routes/userRoute');
 app.use('/api',userRouter);
 
+const connectDB = async () => {
+    try {
+      const conn = await mongoose.connect(process.env.mongodb_url);
+      console.log(`MongoDB Connected: ${conn.connection.host}`);
+    } catch (error) {
+      console.log(error);
+      process.exit(1);
+    }
+  };
+
 app.get('/*',function(req,res){
     res.sendFile(path.join(__dirname,"/build/index.html"));
 
 });
-
-app.listen(PORT, ()=>{
-    console.log(`The server is running on ${PORT}`);
-});
-
-
+connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log("listening for requests");
+    });
+  });
